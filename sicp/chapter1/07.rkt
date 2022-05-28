@@ -1,7 +1,5 @@
 #lang sicp
 
-(#%require rackunit)
-
 (define (average x y)
   (/ (+ x y) 2))
 
@@ -21,5 +19,7 @@
 (define (sqrt x)
   (sqrt-iter 1.0 (improve 1.0 x) x))
 
-(sqrt 2)
-(sqrt 1000000)
+(display (sqrt 0.0004))
+(display "\n")
+(display (sqrt 1000000))
+(display "\n")
