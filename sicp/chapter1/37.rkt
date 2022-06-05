@@ -25,3 +25,4 @@
                      k)))
 
 (display (phi 10))
+(newline)
