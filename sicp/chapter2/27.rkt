@@ -1,17 +1,15 @@
 #lang sicp
 
-(define (fringe items)
-  (define (fringe-iter items answer)
-    (cond ((null? items) answer)
-          ((pair? items)
-            (fringe-iter (car items)
-                         (fringe-iter (cdr items) answer)))
-          (else (cons items answer))))
-  (fringe-iter items nil))
+(define (deep-reverse items)
+  (define (reverse-iter result postfix)
+    (if (null? postfix)
+        result
+        (reverse-iter (cons (deep-reverse (car postfix)) result)
+                      (cdr postfix))))
+  (if (pair? items)
+      (reverse-iter nil items)
+      items))
 
 (define x (list (list 1 2) (list 3 4)))
-
-(display (fringe x))
-(newline)
-(display (fringe (list x x)))
+(display (deep-reverse x))
 (newline)
