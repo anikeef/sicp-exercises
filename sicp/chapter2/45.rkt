@@ -1,22 +1,20 @@
 #lang sicp
 
-(define make-vect cons)
-(define xcor-vect car)
-(define ycor-vect cdr)
+(#%require sicp-pict)
 
-(define (add-vect v1 v2)
-  (make-vect (+ (xcor-vect v1)
-                (xcor-vect v2))
-             (+ (ycor-vect v1)
-                (ycor-vect v2))))
+(define (split transform1 transform2)
+  (define (split-internal painter n)
+    (if (= n 0)
+        painter
+        (transform1
+          painter
+          (let ((smaller (split-internal painter (- n 1))))
+            (transform2 smaller smaller)))))
+  split-internal)
 
-(define (negate-vect v)
-  (make-vect (- (xcor-vect v))
-             (- (ycor-vect v))))
 
-(define (sub-vect v1 v2)
-  (add-vect v1 (negate-vect v2)))
+(define right-split (split beside below))
+(define up-split (split below beside))
 
-(define (scale-vect s v)
-  (make-vect (* s (xcor-vect v))
-             (* s (ycor-vect v))))
+(paint (up-split einstein 4))
+(paint (right-split einstein 4))
