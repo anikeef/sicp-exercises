@@ -13,10 +13,7 @@
   (and (pair? exp) (eq? (car exp) '+)))
 
 (define addend cadr)
-(define (augend exp)
-  (if (null? (cdddr exp))
-      (caddr exp)
-      (append '(+) (cddr exp))))
+(define augend caddr)
 
 (define (make-sum a1 a2)
   (cond ((=number? a1 0) a2)
@@ -28,10 +25,7 @@
   (and (pair? exp) (eq? (car exp) '*)))
 
 (define multiplier cadr)
-(define (multiplicand exp)
-  (if (null? (cdddr exp))
-      (caddr exp)
-      (append '(*) (cddr exp))))
+(define multiplicand caddr)
 
 (define (make-product m1 m2)
   (cond ((or (=number? m1 0) (=number? m2 0)) 0)
@@ -41,6 +35,17 @@
         (else (list '* m1 m2))))
 
 ; Solution
+
+(define (exponentiation? exp)
+  (and (pair? exp) (eq? (car exp) '**)))
+
+(define base cadr)
+(define exponent caddr)
+
+(define (make-exponentiation base exponent)
+  (cond ((=number? exponent 0) 1)
+        ((=number? exponent 1) base)
+        (else (list '** base exponent))))
 
 (define (deriv exp var)
   (cond ((constant? exp) 0)
@@ -55,8 +60,16 @@
                           (deriv (multiplicand exp) var))
             (make-product (deriv (multiplier exp) var)
                           (multiplicand exp))))
+        ((exponentiation? exp)
+          (if (= (exponent exp) 0)
+              0
+              (make-product
+                (exponent exp)
+                (make-product (make-exponentiation
+                                (base exp)
+                                (- (exponent exp) 1))
+                              (deriv (base exp) var)))))
         (else
           (error "неизвестный тип выражения -- DERIV" exp))))
 
-(display (deriv '(* x x x) 'x))
-(newline)
+(display (deriv '(** (+ x 1) 10) 'x))
